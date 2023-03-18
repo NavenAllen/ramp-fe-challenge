@@ -11,16 +11,17 @@ export const InputCheckbox: InputCheckboxComponent = ({ id, checked = false, dis
         className={classNames("RampInputCheckbox--label", {
           "RampInputCheckbox--label-checked": checked,
           "RampInputCheckbox--label-disabled": disabled,
-        })}
-      />
-      <input
-        id={inputId}
-        type="checkbox"
-        className="RampInputCheckbox--input"
-        checked={checked}
-        disabled={disabled}
-        onChange={() => onChange(!checked)}
-      />
+        })}>
+        <input
+          id={inputId}
+          type="checkbox"
+          className="RampInputCheckbox--input"
+          checked={checked}
+          disabled={disabled}
+          onChange={() => onChange(!checked)}
+        />
+      </label>
+      
     </div>
   )
 }
