@@ -24,9 +24,9 @@ export function App() {
     transactionsByEmployeeUtils.invalidateData()
 
     await employeeUtils.fetchAll()
+    setIsLoading(false)
     await paginatedTransactionsUtils.fetchAll()
 
-    setIsLoading(false)
   }, [employeeUtils, paginatedTransactionsUtils, transactionsByEmployeeUtils])
 
   const loadTransactionsByEmployee = useCallback(
@@ -70,7 +70,7 @@ export function App() {
             } else {
               await loadTransactionsByEmployee(newValue.id)
             }
-            
+
           }}
         />
 
