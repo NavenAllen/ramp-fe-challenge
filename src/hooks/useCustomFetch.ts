@@ -28,6 +28,37 @@ export function useCustomFetch() {
     [cache, wrappedRequest]
   )
 
+  const fetchSetApprovalWithCache = useCallback(
+    async <TData, TParams extends object = object>(
+      endpoint: RegisteredEndpoints,
+      params?: TParams
+    ): Promise<TData | null> =>
+      wrappedRequest<TData>(async () => {
+        const result = await fakeFetch<TData>(endpoint, params)
+
+        const cacheKeys = Array.from(cache.current.keys())
+
+        for (const key of cacheKeys) {
+          const cacheResponse = cache?.current.get(key)
+          const updateValue = cacheResponse.includes(params.transactionId)
+          
+          if(updateValue) {
+            const response = JSON.parse(cacheResponse)
+            const data = response.data ?? response ?? null
+
+            for (const transaction of data) {
+              if (transaction.id === params.transactionId) {
+                transaction.approved = params.value
+                cache?.current.set(key, JSON.stringify(response))
+              }
+            }
+          }
+        }
+        return result
+      }),
+    [cache, wrappedRequest]
+  )
+
   const fetchWithoutCache = useCallback(
     async <TData, TParams extends object = object>(
       endpoint: RegisteredEndpoints,
@@ -67,7 +98,7 @@ export function useCustomFetch() {
     [cache]
   )
 
-  return { fetchWithCache, fetchWithoutCache, clearCache, clearCacheByEndpoint, loading }
+  return { fetchWithCache, fetchSetApprovalWithCache, fetchWithoutCache, clearCache, clearCacheByEndpoint, loading }
 }
 
 function getCacheKey(endpoint: RegisteredEndpoints, params?: object) {
